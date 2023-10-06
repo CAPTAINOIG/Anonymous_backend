@@ -27,12 +27,12 @@ const registerUser = (req, res) => {
 const userLogin = (req, res) =>{
     let userName = req.body.userName
     userModel.findOne({userName: userName})
-    .then((result)=>{
-        console.log(result);
-        if(result==null){
+    .then((response)=>{
+        console.log(response);
+        if(response==null){
             res.send({status:false, message: 'Incorrect email or username'})
         }else {
-        res.send({status: true, result, message: 'User Signed in successfully'})
+        res.send({status: true, response, message: 'User Signed in successfully'})
         }
     })
     .catch((err)=>{
@@ -41,11 +41,12 @@ const userLogin = (req, res) =>{
 }
 
 const sendMessage = (req,res) => {     
-    let formy = new messageModel(req.body)
-    formy.save()
-    .then((result)=>{
-        console.log(result)
-        res.send({status: true, message: "Message sent successfully", result})
+    let info = req.body
+    form = messageModel(info)
+    form.save()
+    .then((response)=>{
+        console.log(response)
+        res.send({status: true, message: "Message sent successfully"})
     })
     .catch((err)=>{
         console.log(err)
@@ -54,7 +55,9 @@ const sendMessage = (req,res) => {
 }
 
 const viewMessage = (req,res)=>{
+    console.log(req.body);
     let userName = req.body.userName
+    // let email = req.body.email
     messageModel.find({userName: userName})
     .then((result)=>{
         console.log(result);
@@ -64,4 +67,23 @@ const viewMessage = (req,res)=>{
         console.log(err);
     })
 }
-module.exports = {registerUser, userLogin, sendMessage, viewMessage}
+
+const deleteOne = (req,res) =>{
+    console.log(req.body);
+    messageModel.deleteOne({time: req.body.time, date: req.body.date, message: req.body.message})
+    .then((result)=>{
+        console.log(result);
+        console.log(req.body);
+        if(result){
+            messageModel.find()
+        .then((result)=>{
+        console.log(result); 
+        res.send({status:true,message:'updated after deletion',result})})
+        
+        }
+    })
+    .catch((error)=>{
+        console.log(error);
+    })
+}
+module.exports = {registerUser, userLogin, sendMessage, viewMessage, deleteOne}

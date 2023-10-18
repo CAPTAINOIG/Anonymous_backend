@@ -30,7 +30,9 @@ const userLogin = (req, res) =>{
     .then((response)=>{
         console.log(response);
         if(response==null){
-            res.send({status:false, message: 'Incorrect email or username'})
+            // res.send({status:false, message: 'Incorrect email or username'})
+            res.send({status:false, message: 'Incorrect password or username'})
+// 
         }else {
         res.send({status: true, response, message: 'User Signed in successfully'})
         }

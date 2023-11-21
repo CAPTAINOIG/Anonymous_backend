@@ -3,8 +3,7 @@ const app = express()
 const bodyparser = require ('body-parser')
 const dotenv = require ('dotenv')
 const cors = require ('cors')
-const mongoose = require ('mongoose')
-let userRouter = require('./routes/user.route')
+
 
 
 dotenv.config()
@@ -15,20 +14,12 @@ app.use(express.json({limit:"50mb"}))
 app.use(bodyparser.urlencoded({extended:true, limit: "50mb"}))
 
 
+require('./connection/mongoose.connection')
 
+let userRouter = require('./routes/user.route')
 app.use('/user', userRouter)
 
-
-let URI = process.env.MONGO
-
-
- mongoose.connect(URI)
- .then(()=>{
-    console.log('Mongoose has connected successfully');
- })
- .catch((err)=>{
-    console.log(err);
- })
+require('./models/user.model');
 
 
  app.get('/', (req,res)=>{

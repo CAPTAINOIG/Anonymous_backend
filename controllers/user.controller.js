@@ -5,42 +5,98 @@ let {userModel, messageModel} = require('../models/user.model')
 
 
 
-const registerUser = (req, res) => {
-    let form = new userModel(req.body)
-    form.save()
-    .then((result)=>{
-        console.log(result);
-        res.send({status: true, message: 'user signed up successfully', result})
-    })
-    .catch((err)=>{
-        console.log(err.code);
-        if(err.code ==11000){
-            res.send( {status: false, message: "Duplicate user found"})
-        } else{
-            res.send( {status: false, message: "please fill in appropriately"})
-        
-        }
-        
-    })
-}
 
-const userLogin = (req, res) =>{
-    let userName = req.body.userName
-    userModel.findOne({userName: userName})
-    .then((response)=>{
-        console.log(response);
-        if(response==null){
-            // res.send({status:false, message: 'Incorrect email or username'})
-            res.send({status:false, message: 'Incorrect password or username'})
-// 
-        }else {
-        res.send({status: true, response, message: 'User Signed in successfully'})
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const registerUser = (req, res) => {
+    let form = new userModel(req.body);
+    form.save()
+      .then((result) => {
+        console.log(result);
+        res.status(200).json({ status: true, message: "User signed up successfully", result });
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err.code === 11000) {
+          res.status(409).json({ status: false, message: "Duplicate user found" });
+        } else {
+          res.status(400).json({ status: false, message: "Fill in appropriately" });
         }
-    })
-    .catch((err)=>{
-        console.log(err);
-    })
-}
+      });
+  };
+
+
+  
+//     console.log(req.body);
+//     const { password, email } = req.body;
+// const userLogin = async (req, res) => {
+//     let userName = req.body.userName
+//     userModel.findOne({userName: userName})
+//     .then((response)=>{
+//         console.log(response);
+//         if(response==null){
+//             // res.send({status:false, message: 'Incorrect email or username'})
+//             res.send({status:false, message: 'Incorrect username'})
+// // 
+//         }else {
+//         res.send({status: true, response, message: 'User Signed in successfully'})
+//         }
+//     })
+//     .catch((err)=>{
+//         console.log(err);
+//     })
+// }
+
+
+const userLogin = async (req, res) => {
+    let userName = req.body.userName;
+    let password = req.body.password; // Assuming password is sent in the request body
+
+    userModel.findOne({ userName: userName })
+        .then((user) => {
+            if (!user) {
+                res.send({ status: false, message: 'Incorrect username' });
+            } else {
+                // Assuming user object has a 'password' field, change it as per your actual schema
+                if (user.password === password) {
+                    res.send({ status: true, message: 'User signed in successfully', user });
+                } else {
+                    res.send({ status: false, message: 'Incorrect password' });
+                }
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({ status: false, message: 'Server error' });
+        });
+};
+
+
+
+
 
 const sendMessage = (req,res) => {     
     let info = req.body
